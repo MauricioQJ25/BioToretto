@@ -2,6 +2,8 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Int16.h>
+#include <std_msgs/Float32.h>
 
 
 double Vx  = 0;
@@ -10,25 +12,35 @@ double Vth = 0;
 //Variables del auto
 double alpha=0;
 double theta_punto=0;
-double radio =0.03;
-double dist_llantas=0.38;
+double radio =0.034;
+double dist_llantas=0.26;
+//Variables intermedias para conversion steering
+double ang_max=0.57;//angulo en radianes max
+double ang_max_int=120;//290 - 120 considerando 120 como salida a 0 radianes
+double ang_zero_int=120;
+//Variables intermedias para conversion speed
+double vmax=1;
+double vmax_int=1;
 
 //*****************************************************************************************
 //float speed=.1;
-void callbackSpeed(const geometry_msgs::Twist::ConstPtr& msg)
+void callbackSpeed(const std_msgs::Int16 msg)
 {
-     ROS_INFO("I heard Vel: linear[%lf %lf %lf]  steering[%lf %lf %lf]",
-           msg->linear.x, msg->linear.y, msg->linear.z,
-           msg->angular.x, msg->angular.y, msg->angular.z);
+//     ROS_INFO("I heard Vel: linear[%lf]",msg);
+     
+     theta_punto =double(msg.data)*(vmax/vmax_int);
 
-  theta_punto = msg->linear.x;
-  alpha = msg->angular.z;
+     Vx = 2*M_PI*radio*theta_punto;
 
-  Vx = 2*M_PI*radio*theta_punto;
-  Vth = Vx*sin(alpha)/dist_llantas;
-
-  Vy  = msg->linear.y;
+     Vy  = 0;
    
+}
+
+void callbackSteering(const std_msgs::Int16 msg1)
+{
+  // ROS_INFO("I heard Vel: steering[%lf]",msg1);
+   alpha = (double(msg1.data)-120)*(ang_max/ang_max_int);
+   Vth = Vx*sin(alpha)/dist_llantas;
 }
 
 int main(int argc, char** argv) {
@@ -37,8 +49,9 @@ int main(int argc, char** argv) {
     ros::NodeHandle n;
     ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 1);
     tf::TransformBroadcaster broadcaster;
-
-    ros::Subscriber vel_sub = n.subscribe("/hardware/speed", 1, callbackSpeed);
+    
+    ros::Subscriber velAngular_sub = n.subscribe("/manual_control/steering",1,callbackSteering);
+    ros::Subscriber vel_sub = n.subscribe("/manual_control/speed", 1, callbackSpeed);
 
     // ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("joint_states", 1);
     double x  = 0.0;
