@@ -19,28 +19,43 @@ double ang_max=0.57;//angulo en radianes max
 double ang_max_int=120;//290 - 120 considerando 120 como salida a 0 radianes
 double ang_zero_int=120;
 //Variables intermedias para conversion speed
-double vmax=1;
-double vmax_int=1;
+double vmax=1;//metros por segundo
+double vmax_int=4000;
 
 //*****************************************************************************************
 //float speed=.1;
-void callbackSpeed(const std_msgs::Int16 msg)
+void callbackSpeed(const std_msgs::Int16 speed)
 {
 //     ROS_INFO("I heard Vel: linear[%lf]",msg);
-     
-     theta_punto =double(msg.data)*(vmax/vmax_int);
+     //evaluar las velocidades máximas alcanzadas por el coche 
+     if (speed.data < 4000 || speed.data > -4000 ){
+        theta_punto =double(speed.data)*(vmax/vmax_int);
 
-     Vx = 2*M_PI*radio*theta_punto;
+        Vx = 2*M_PI*radio*theta_punto;
 
-     Vy  = 0;
+        Vy  = 0;
+     }
+     else{
+      Vx=vmax;
+     }
+      
    
 }
 
-void callbackSteering(const std_msgs::Int16 msg1)
+void callbackSteering(const std_msgs::Int16 steering)
 {
   // ROS_INFO("I heard Vel: steering[%lf]",msg1);
-   alpha = (double(msg1.data)-120)*(ang_max/ang_max_int);
-   Vth = Vx*sin(alpha)/dist_llantas;
+   //evaluar el steering máximo alcanzado por el coche 
+   if(steering.data<290 || steering.data > -50){
+      alpha = (double(steering.data)-120)*(ang_max/ang_max_int);
+      Vth = Vx*sin(alpha)/dist_llantas;
+   }else 
+   if(steering.data <= -50){
+      Vth= Vx*sin(-ang_max)/dist_llantas;  
+   }else
+   if(steering.data >=290){
+      Vth= Vx*sin(ang_max)/dist_llantas;
+   }
 }
 
 int main(int argc, char** argv) {
@@ -64,10 +79,10 @@ int main(int argc, char** argv) {
     
     ros::Rate r(30);
 
-    const double degree = M_PI/180;
+    //const double degree = M_PI/180;
 
     
-    double tilt = 0, tinc = degree, swivel=0, angle=0, height=0, hinc=0.005;
+    //double tilt = 0, tinc = degree, swivel=0, angle=0, height=0, hinc=0.005;
 
     
 

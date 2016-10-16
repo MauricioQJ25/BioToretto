@@ -3,8 +3,8 @@
 
 <link name="base_link">
   <visual>
-    <origin xyz="0 0 0.17" rpy="0 0 0"/>
-    <geometry> <box size="0.42 0.42 0.2"/></geometry>
+    <origin xyz="0 0 0.11" rpy="0 0 0"/>
+    <geometry> <box size="0.48 0.3 0.15"/></geometry>
     <material name="blue"><color rgba="0 0 1 1"/></material>
   </visual>
 </link>
