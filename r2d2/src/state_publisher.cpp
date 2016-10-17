@@ -28,7 +28,7 @@ void callbackSpeed(const std_msgs::Int16 speed)
 {
 //     ROS_INFO("I heard Vel: linear[%lf]",msg);
      //evaluar las velocidades máximas alcanzadas por el coche 
-     if (speed.data < 4000 || speed.data > -4000 ){
+     if (speed.data < 4000 && speed.data > -4000 ){
         theta_punto =double(speed.data)*(vmax/vmax_int);
 
         Vx = 2*M_PI*radio*theta_punto;
@@ -46,7 +46,7 @@ void callbackSteering(const std_msgs::Int16 steering)
 {
   // ROS_INFO("I heard Vel: steering[%lf]",msg1);
    //evaluar el steering máximo alcanzado por el coche 
-   if(steering.data<290 || steering.data > -50){
+   if(steering.data<290 && steering.data > -50){
       alpha = (double(steering.data)-120)*(ang_max/ang_max_int);
       Vth = Vx*sin(alpha)/dist_llantas;
    }else 
