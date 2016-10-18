@@ -23,7 +23,7 @@ int main(int argc,char **  argv)
         ros::NodeHandle n;
         ros::Publisher pubSpeed = n.advertise<std_msgs::Int16>("/manual_control/speed" ,1);
         ros::Publisher pubSteering = n.advertise<std_msgs::Int16>("/manual_control/steering",1);
-        ros::Subscriber subPath = n.subscribe("/navigation/goal_path",1,callback_errorcalc);
+        ros::Subscriber subPath = n.subscribe("/lane",1,callback_errorcalc);
         ros::Rate loop(10);
 
         while(ros::ok())
