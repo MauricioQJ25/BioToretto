@@ -16,7 +16,7 @@ double radio =0.034;
 double dist_llantas=0.26;
 //Variables intermedias para conversion steering
 double ang_max=0.57;//angulo en radianes max
-double ang_max_int=120;//290 - 120 considerando 120 como salida a 0 radianes
+double ang_max_int=170;//290 - 120 considerando 120 como salida a 0 radianes
 double ang_zero_int=120;
 //Variables intermedias para conversion speed
 double vmax=1;//metros por segundo
